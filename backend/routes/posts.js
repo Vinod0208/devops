@@ -11,10 +11,11 @@ import {
 } from '../controllers/posts-controller.js';
 import { REDIS_KEYS } from '../utils/constants.js';
 import { cacheHandler } from '../utils/middleware.js';
+import { authenticationHandler } from '../middlewares/auth-middleware.js';
 const router = Router();
 
 // Create a new post
-router.post('/', createPostHandler);
+router.post('/', authenticationHandler, createPostHandler);
 
 // Get all posts
 router.get('/', cacheHandler(REDIS_KEYS.ALL_POSTS), getAllPostsHandler);

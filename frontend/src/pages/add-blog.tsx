@@ -97,7 +97,9 @@ function AddBlog() {
     e.preventDefault();
     if (validateFormData()) {
       try {
-        const response = await axios.post(import.meta.env.VITE_API_PATH + '/api/posts/', formData);
+        const response = await axios.post(import.meta.env.VITE_API_PATH + '/api/posts/', formData, {
+          headers: { access_token: 'Bearer ' + 'token' },
+        });
 
         if (response.status === 200) {
           toast.success('Blog post successfully created!');
@@ -106,7 +108,14 @@ function AddBlog() {
           toast.error('Error: ' + response.data.message);
         }
       } catch (err: any) {
-        toast.error('Error: ' + err.message);
+        if (err.response.status === 403) {
+          toast.error('Error: ' + 'Your session has expired, please login again!');
+          localStorage.setItem('isLoggedIn', 'false');
+          navigate('/');
+        } else {
+          console.log('Error :', err.message);
+          toast.error('Something went wrong. Please try again later.');
+        }
       }
     }
   };
